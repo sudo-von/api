@@ -25,6 +25,7 @@
     "start:clean": "rimraf dist"
   },
   "dependencies": {
+    "@sudo-von/core": "github:sudo-von/core#v0.8.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "express-openapi": "^12.1.3",

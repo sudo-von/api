@@ -1,22 +1,43 @@
 import cors from "cors";
-import express, { Express } from "express";
+import express from "express";
+import {
+  ApplyRequestMiddlewaresOptions,
+  ConfigureHeaderMiddlewaresOptions,
+} from "./middlewares.types";
 
 /**
- * Middleware for handling headers.
+ * Registers global middleware for handling HTTP headers and request payloads.
  *
- * - CORS support using default settings.
- * - JSON body parsing for JSON:API specification.
+ * Responsibilities:
+ * - Enables Cross-Origin Resource Sharing (CORS) with default settings.
+ * - Parses incoming requests with `application/vnd.api+json` content type as JSON.
  *
- * This middleware must be registered **before** all route handlers.
+ * This middleware should be applied **before** any route or error handlers
+ * to ensure headers and body content are properly processed.
+ *
+ * @param app - The Express application instance.
  */
-const configureHeaderMiddlewares = (app: Express) => {
+const configureHeaderMiddlewares = ({
+  app,
+}: ConfigureHeaderMiddlewaresOptions) => {
   app.use(cors());
   app.use(express.json({ type: "application/vnd.api+json" }));
 };
 
 /**
- * Applies middlewares for handling incoming requests.
+ * Applies all necessary middleware for processing incoming HTTP requests.
+ *
+ * This function sets up low-level middleware such as:
+ * - Header configuration (CORS, content-type handling).
+ * - JSON body parsing for compliant clients.
+ *
+ * Additional request-level middleware (e.g., compression, rate limiting) can be
+ * added here as the application evolves.
+ *
+ * @param options - Configuration options including the Express app instance.
  */
-export const applyRequestMiddlewares = (app: Express) => {
-  configureHeaderMiddlewares(app);
+export const applyRequestMiddlewares = (
+  options: ApplyRequestMiddlewaresOptions
+) => {
+  configureHeaderMiddlewares(options);
 };

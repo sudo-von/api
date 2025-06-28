@@ -1,5 +1,6 @@
 import { Express } from "express";
 import { ICoreService } from "@sudo-von/core";
+import { AbstractLoggerService } from "@sudo-von/logging";
 import { STATUS_CODES } from "./constants";
 
 /**
@@ -21,7 +22,7 @@ export interface IApiError {
   /**
    * The associated HTTP status code.
    */
-  statusCode: StatusCodeValue;
+  status: StatusCodeValue;
 
   /**
    * A brief summary of the error type.
@@ -49,6 +50,11 @@ export interface IApiServiceInitOptions {
    * The Express application instance to mount routes on.
    */
   app: Express;
+
+  /**
+   * Logging service used internally by the API for structured output and diagnostics.
+   */
+  logger: AbstractLoggerService;
 
   /**
    * Directory path where route handler files are located.

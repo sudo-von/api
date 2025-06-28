@@ -1,26 +1,36 @@
-import { Express, NextFunction, Request, Response } from "express";
-import { AbstractLoggerService } from "@sudo-von/logging";
+import { NextFunction, Request, Response } from "express";
 import { IApiError } from "../types";
 import { STATUS_CODES } from "../constants";
 import { ApiError, InternalServerError } from "../errors";
+import {
+  ApplyResponseMiddlewaresOptions,
+  ConfigureErrorMiddlewaresOptions,
+} from "./middlewares.types";
 
 /**
- * Registers a global error-handling middleware for the API.
+ * Installs a global error-handling middleware for API exception management.
  *
- * Responsibilities:
- * - Logs unexpected errors using appropriate severity (`warn` for client errors, `error` for server errors).
- * - Wraps unknown exceptions in a generic `InternalServerError` to ensure consistent error responses.
- * - Sends a structured `IApiError` response to the client in accordance with the application's error format.
+ * This middleware captures all unhandled exceptions occurring during the request-response
+ * cycle and ensures they are logged and transformed into a consistent error response format.
  *
- * This middleware must be registered **after** all route definitions to properly handle uncaught errors.
+ * Behavior:
+ * - If the error is an instance of `ApiError`, it is passed through as-is.
+ * - If the error is unknown, it is wrapped in an `InternalServerError`.
+ * - Logs are emitted using different levels depending on the error type:
+ *   - `warn` for expected client-side errors (4xx)
+ *   - `error` for server-side or unexpected failures (5xx)
+ * - The response is returned in the `IApiError` structure.
  *
- * @param app - The Express application instance.
- * @param logger - A logger service used to capture error output.
+ * This middleware must be registered **after** all route handlers to properly
+ * catch uncaught exceptions.
+ *
+ * @param app - Express application instance.
+ * @param logger - Logger service for structured error reporting.
  */
-const configureErrorMiddlewares = (
-  app: Express,
-  logger: AbstractLoggerService
-) => {
+const configureErrorMiddlewares = ({
+  app,
+  logger,
+}: ConfigureErrorMiddlewaresOptions) => {
   app.use(
     (
       error: Error,
@@ -49,17 +59,21 @@ const configureErrorMiddlewares = (
 };
 
 /**
- * Applies middleware for handling standardized API responses.
+ * Registers middleware responsible for producing standardized API responses.
  *
- * Currently, this function installs the global error-handling middleware.
- * Additional response-related middleware (e.g., compression, headers) can be added here in the future.
+ * This function currently installs global error-handling logic and can be
+ * extended to include additional response-focused middleware such as:
+ * - Response compression
+ * - Security headers
+ * - Response time metrics
  *
- * @param app - The Express application instance.
- * @param logger - A logger service used to capture runtime logs.
+ * Middleware applied here should run **after** all route handlers but
+ * **before** the server sends any final response.
+ *
+ * @param options - Initialization options including the Express app and logger service.
  */
 export const applyResponseMiddlewares = (
-  app: Express,
-  logger: AbstractLoggerService
+  options: ApplyResponseMiddlewaresOptions
 ) => {
-  configureErrorMiddlewares(app, logger);
+  configureErrorMiddlewares(options);
 };

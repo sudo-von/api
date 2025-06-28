@@ -9,7 +9,7 @@ import { ApiErrorOptions, IApiError, StatusCodeValue } from "./types";
 export class ApiError extends Error implements IApiError {
   code: string;
   detail: string;
-  statusCode: StatusCodeValue;
+  status: StatusCodeValue;
   title: string;
 
   constructor(error: IApiError) {
@@ -18,7 +18,7 @@ export class ApiError extends Error implements IApiError {
     this.code = error.code;
     this.detail = error.detail;
     this.name = this.constructor.name;
-    this.statusCode = error.statusCode;
+    this.status = error.status;
     this.title = error.title;
 
     Error.captureStackTrace(this, this.constructor);
@@ -38,7 +38,7 @@ export class BadRequestError extends ApiError {
       detail:
         options.detail ||
         "The request could not be processed due to invalid input. Please check the provided data.",
-      statusCode: STATUS_CODES.BAD_REQUEST,
+      status: STATUS_CODES.BAD_REQUEST,
       title:
         options.title || "There was an error while validating the request.",
     });
@@ -58,7 +58,7 @@ export class ConflictError extends ApiError {
       detail:
         options.detail ||
         "The request could not be completed due to a conflict with the current state of the resource.",
-      statusCode: STATUS_CODES.CONFLICT,
+      status: STATUS_CODES.CONFLICT,
       title: options.title || "Conflict detected while processing the request.",
     });
   }
@@ -76,7 +76,7 @@ export class InternalServerError extends ApiError {
       code: "INTERNAL_SERVER_ERROR",
       detail:
         "An unexpected error occurred on the server. Please try again later.",
-      statusCode: STATUS_CODES.INTERNAL_SERVER_ERROR,
+      status: STATUS_CODES.INTERNAL_SERVER_ERROR,
       title: "Internal Server Error.",
     });
   }

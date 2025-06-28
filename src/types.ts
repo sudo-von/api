@@ -33,9 +33,20 @@ export interface IApiError {
 /**
  * Core interface for the API service.
  *
- * Extends the standard lifecycle interface with API-specific initialization options.
+ * Extends the standard lifecycle interface with API-specific initialization and close options.
  */
-export interface IApiService extends ICoreService<IApiServiceInitOptions> {}
+export interface IApiService
+  extends ICoreService<IApiServiceInitOptions, IApiServiceCloseOptions> {}
+
+/**
+ * Configuration options required to close the API service.
+ */
+export interface IApiServiceCloseOptions {
+  /**
+   * Logging service used internally by the API for structured output and diagnostics.
+   */
+  logger: AbstractLoggerService;
+}
 
 /**
  * Configuration options required to initialize the API service.

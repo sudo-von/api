@@ -1,6 +1,6 @@
 {
   "name": "@sudo-von/api",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Provides a lightweight and reusable API service layer for handling application requests, responses, and business logic orchestration.",
   "keywords": [
     "@sudo-von",
